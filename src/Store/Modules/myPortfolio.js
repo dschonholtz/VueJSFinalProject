@@ -24,7 +24,7 @@ const mutations = {
         const newFunds = payload.price * payload.quantity;
         state.funds += newFunds;
         state.myStocks[payload.symbol] -= payload.quantity;
-        if(payload.quantity <= 0) {
+        if(state.myStocks[payload.symbol] <= 0) {
             delete state.myStocks[payload.symbol];
         }
     },

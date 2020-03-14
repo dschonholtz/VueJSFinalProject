@@ -20,17 +20,15 @@
         components: {
             appStock: Stock
         },
-        computed: {
+        methods: {
             ...mapGetters({
                 getStocks: 'stocks/getAll',
                 getMyStocks: 'myPortfolio/getMyStocks'
             }),
-        },
-        methods: {
             getMyStockInfo() {
                 let myStocks = {};
-                const allStocks = this.getStocks;
-                const owned = this.getMyStocks;
+                const allStocks = this.getStocks();
+                const owned = this.getMyStocks();
                 for(let symbol in allStocks) {
                     if(symbol in owned) {
                         myStocks[symbol] = allStocks[symbol];

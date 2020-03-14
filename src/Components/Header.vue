@@ -8,16 +8,16 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <router-link class="nav-link" to="/portfolio">Portfolio</router-link>
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/portfolio"><a>Portfolio</a></router-link>
                 </li>
                 <li class="nav-item">
-                    <router-link class="nav-link" to="/stocks">Stocks</router-link>
+                    <router-link class="nav-link" to="/stocks"><a>Stocks</a></router-link>
                 </li>
             </ul>
             <ul class="navbar-nav mr-sm-3">
                 <li class="nav-item">
-                    <a class="nav-link">End Day</a>
+                    <a class="nav-link" @click="endDay">End Day</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +26,7 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item">Save</a>
                         <div class="dropdown-divider"></div>
-                        <router-link class="dropdown-item" to="/load">Load</router-link>
+                        <router-link class="dropdown-item" to="/load"><a>Load</a></router-link>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -39,13 +39,18 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import {mapGetters, mapActions} from 'vuex';
     export default {
         computed: {
             ...mapGetters({
                 getFunds: 'myPortfolio/getFunds'
             })
         },
+        methods: {
+            ...mapActions({
+                endDay: 'stocks/updatePrice'
+            })
+        }
     }
 </script>
 

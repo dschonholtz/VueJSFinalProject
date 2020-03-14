@@ -1,54 +1,63 @@
 <template>
-    <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="card card-default mt-3 stock">
-            <div class="card-header" :class="{'isMyPortfolio': this.isMyPortfolio}">
-                <div class="row">
-                    <div class="col">
-                        <h4>
-                            {{companyName}}
-                        </h4>
-                    </div>
-                    <div v-if="this.quantityOwned() > 0" class="col text-right">
-                        Quantity: {{this.quantityOwned()}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <small>({{ticker}})</small>
-                    </div>
-                    <div class="col text-right">
-                        Price: {{price.toFixed(2)}}
-                    </div>
-                </div>
-            </div>
-            <div class="card-content">
-                <form>
-                    <div class="row mt-2">
-                        <div class="col form-group">
-                            <input type="text" placeholder="Quantity" class="form-control" v-model="quantity">
+    <transition 
+    name="fade" 
+    v-bind:css="false"
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave">
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card card-default mt-3 stock">
+                <div class="card-header" :class="{'isMyPortfolio': this.isMyPortfolio}">
+                    <div class="row">
+                        <div class="col">
+                            <h4>
+                                {{companyName}}
+                            </h4>
                         </div>
-                        <div class="col form-group text-right">
-                            <button 
-                            v-if="sellIsAllowed()"
-                            class="btn btn-primary sell" 
-                            @click.prevent="sellStockWrapper({symbol: ticker, price: price, quantity: quantity})"
-                            :disabled="!(quantity <= getMyStocks[ticker] && Number.isInteger(parseInt(quantity)))"
-                            >Sell</button>
-                            <button 
-                            class="btn btn-primary" 
-                            @click.prevent="buyStockWrapper({symbol: ticker, price: price, quantity: quantity})"
-                            :disabled="!buyIsAllowed"
-                            >Buy</button>
+                        <div v-if="this.quantityOwned() > 0" class="col text-right">
+                            Quantity: {{this.quantityOwned()}}
                         </div>
                     </div>
-                </form>
+                    <div class="row">
+                        <div class="col">
+                            <small>({{ticker.toUpperCase()}})</small>
+                        </div>
+                        <div class="col text-right">
+                            Price: {{price.toFixed(2)}}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <form>
+                        <div class="row mt-2">
+                            <div class="col form-group">
+                                <input type="text" placeholder="Quantity" class="form-control" v-model="quantity">
+                            </div>
+                            <div class="col form-group text-right">
+                                <button 
+                                v-if="sellIsAllowed()"
+                                class="btn btn-primary sell" 
+                                @click.prevent="sellStockWrapper({symbol: ticker, price: price, quantity: quantity})"
+                                :disabled="!(quantity <= getMyStocks()[ticker] && Number.isInteger(parseInt(quantity)))"
+                                >Sell</button>
+                                <button 
+                                class="btn btn-primary" 
+                                @click.prevent="buyStockWrapper({symbol: ticker, price: price, quantity: quantity})"
+                                :disabled="!buyIsAllowed"
+                                >Buy</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    </transition>
+    
 </template>
 
 <script>
     import {mapActions, mapGetters} from 'vuex';
+    import Velocity from 'velocity-animate';
 
     export default {
         props: ['companyName', 'ticker', 'price', 'isMyPortfolio'],
@@ -57,8 +66,12 @@
                 buyStock: 'myPortfolio/buyStock',
                 sellStock: 'myPortfolio/sellStock',
             }),
+            ...mapGetters({
+                getFunds: 'myPortfolio/getFunds',
+                getMyStocks: 'myPortfolio/getMyStocks'
+            }),
             quantityOwned() {
-                return (!(this.ticker in this.getMyStocks) ? 0 : this.getMyStocks[this.ticker])
+                return (!(this.ticker in this.getMyStocks()) ? 0 : this.getMyStocks()[this.ticker])
             },
             buyStockWrapper(data) {
                 this.buyStock(data);
@@ -69,8 +82,32 @@
                 this.quantity = '';
             },
             sellIsAllowed() {
-                return this.ticker in this.getMyStocks;
+                return this.ticker in this.getMyStocks();
             },
+            beforeEnter: function (el) {
+                el.style.opacity = 0
+                el.style.height = 0
+            },
+            enter: function (el, done) {
+                var delay = 150
+                setTimeout(function () {
+                    Velocity(
+                    el,
+                    { opacity: 1, height: '1.6em' },
+                    { complete: done }
+                    )
+                }, delay)
+            },
+            leave: function (el, done) {
+                var delay = 250
+                setTimeout(function () {
+                    Velocity(
+                    el,
+                    { opacity: 0, height: 0 },
+                    { complete: done }
+                    )
+                }, delay)
+            }
         },
         data() {
             return {
@@ -78,12 +115,8 @@
             }
         },
         computed: {
-            ...mapGetters({
-                getFunds: 'myPortfolio/getFunds',
-                getMyStocks: 'myPortfolio/getMyStocks'
-            }),
             buyIsAllowed() {
-                const enoughCash = this.getFunds >= this.quantity * this.price;
+                const enoughCash = this.getFunds() >= this.quantity * this.price;
                 return this.quantity > 0 && Number.isInteger(parseInt(this.quantity)) && enoughCash;
             },
         }
@@ -100,6 +133,7 @@
 
     .stock {
         cursor: pointer;
+        transition: all 1s;
     }
 
     .card:hover {
@@ -138,4 +172,5 @@
     .btn:disabled {
         cursor: not-allowed;
     }
+
 </style>
