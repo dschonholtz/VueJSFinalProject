@@ -31,7 +31,7 @@
     }
 
     .slide-enter-active {
-        animation: slide-in .3s ease-out forwards;
+        animation: slide-in .3s ease-in-out forwards;
         transition: opacity .3s;
     }
 
@@ -40,14 +40,10 @@
     }
 
     .slide-leave-active {
-        animation: slide-out .3s ease-out forwards;
+        animation: slide-out .3s ease-in-out forwards;
         transition: opacity .3s;
         opacity: 0;
         position: absolute;
-    }
-
-    .slide-move {
-        transition: transform .3s;
     }
 
     @keyframes slide-in {

@@ -1,11 +1,7 @@
 <template>
-    <transition 
-    name="fade" 
-    v-bind:css="false"
-    v-on:before-enter="beforeEnter"
-    v-on:enter="enter"
-    v-on:leave="leave">
-        <div class="col-sm-12 col-md-6 col-lg-4">
+    <!-- <transition 
+    name="fade" appear> -->
+        <div class="col-sm-12 col-md-6 col-lg-4 stock-wrapper">
             <div class="card card-default mt-3 stock">
                 <div class="card-header" :class="{'isMyPortfolio': this.isMyPortfolio}">
                     <div class="row">
@@ -51,7 +47,7 @@
                 </div>
             </div>
         </div>
-    </transition>
+    <!-- </transition> -->
     
 </template>
 
@@ -173,4 +169,29 @@
         cursor: not-allowed;
     }
 
+
+    /* .fade-enter {
+        opacity: 0;
+    }
+
+    .fade-enter-active {
+        transition: opacity .75s ease-in-out;
+    }
+
+    .fade-leave {
+
+    }
+
+    .fade-leave-active {
+        transition: opacity .75s ease-in-out;
+        opacity: 0;
+    } */
+
+    .stock-wrapper {
+        position: relative;
+        -webkit-transition: position 2s ease-in-out;
+        -moz-transition: position 5s ease-in-out;
+        -o-transition: position 5s ease-in-out;
+        transition: position 5s ease-in-out;
+    }
 </style>
